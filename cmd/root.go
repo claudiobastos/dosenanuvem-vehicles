@@ -3,16 +3,15 @@ package cmd
 import (
 	"os"
 
-	"github.com/spf13/cobra"
 	"github.com/dose-na-nuvem/vehicles/config"
+	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 )
 
-// Configura o nome padrão do arquivo de configuração.
 var (
-	configFile     string
-	cfg            = config.New()
+	configFile string
+	cfg        = config.New()
 )
 
 // rootCmd representa o comando base quando chamado sem nenhum subcomando.
@@ -25,19 +24,19 @@ var rootCmd = &cobra.Command{
 Será possível adicionar carros com multiplas tags e relacionar os carros com os donos atuais.`,
 }
 
-// Execute adiciona todos os comandos filhos ao comando raiz e configura as bandeiras apropriadamente.
-// Isso é chamado por main.main(). Isso só precisa acontecer uma vez para o rootCmd.
+// Execute adds all child commands to the root command and sets flags appropriately.
+// This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	cobra.OnInitialize(initConfig)
 
 	rootCmd.PersistentFlags().StringVar(&configFile, "config", "config.yaml",
 		"Define o arquivo de configuração a utilizar.")
-	
+
 	// Associa o Viper as flags
 	if err := viper.BindPFlags(startCmd.Flags()); err != nil {
 		cfg.Logger.Error("falha ao ligar as flags", zap.Error(err))
 	}
-	
+
 	err := rootCmd.Execute()
 	if err != nil {
 		os.Exit(1)
